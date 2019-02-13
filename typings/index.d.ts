@@ -77,8 +77,8 @@ declare module RP {
     blendMode?: number;
     cacheAsBitmap?: boolean;
     boundsPadding?: number;
-    fillAlpha: number;
-    fill:
+    fillAlpha?: number;
+    fill?:
       | string
       | string[]
       | number

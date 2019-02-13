@@ -46,6 +46,14 @@ const reconciler = Reconciler<
 
   createInstance,
 
+  appendChild(parent, child) {
+    if (typeof child === "string") {
+      //
+    } else {
+      parent.addChild(child);
+    }
+  },
+
   appendInitialChild(parent, child) {
     if (typeof child === "string") {
       //
