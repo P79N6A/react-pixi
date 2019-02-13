@@ -1,0 +1,25 @@
+{
+  "name": "react-pixi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "module": "index.es.js",
+  "scripts": {
+    "dev": "tsc -w  --module commonjs --outDir lib & tsc -w --module ESNext --outDir es"
+  },
+  "repository": "git@code.byted.org:douu/react-pixi.git",
+  "author": "yinz <yinzhong.enjoying@bytedance.com>",
+  "peerDependencies": {
+    "pixi.js": "^4.8.5",
+    "react": "^16.8.1"
+  },
+  "devDependencies": {
+    "@types/pixi.js": "^4.8.6",
+    "@types/react-reconciler": "^0.18.0",
+    "parcel-bundler": "^1.11.0",
+    "typescript": "^3.3.1"
+  },
+  "dependencies": {
+    "pixi.js": "^4.8.5",
+    "react-reconciler": "^0.18.0"
+  }
+}
