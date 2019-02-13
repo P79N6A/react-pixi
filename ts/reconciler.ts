@@ -62,6 +62,24 @@ const reconciler = Reconciler<
     }
   },
 
+  removeChild(parent, child) {
+    if (typeof child === "string") {
+      //
+    } else {
+      child.removeAllListeners();
+      parent.removeChild(child);
+    }
+  },
+
+  removeChildFromContainer(parent, child) {
+    if (typeof child === "string") {
+      //
+    } else {
+      child.removeAllListeners();
+      parent.removeChild(child);
+    }
+  },
+
   shouldDeprioritizeSubtree(type, props) {
     return false;
   },

@@ -1,3 +1,5 @@
+import { isFunction } from "../utils";
+
 // const DEFAULT_PROPS = {
 //   alpha: 1,
 //   buttonMode: false,
@@ -38,13 +40,13 @@ const EVENT_HANDLER_MAP: Record<
   onTouchendOutside: "touchendoutside",
   onTouchCancel: "touchcancel",
   onPointerCancel: "pointercancel",
-  onPointerout: "pointerout",
-  onPointerover: "pointerover",
+  onPointerOut: "pointerout",
+  onPointerOver: "pointerover",
   onPointerTap: "pointertap",
   onPointerDown: "pointerdown",
   onPointerUp: "pointerup",
   onPointerUpOutside: "pointerupoutside",
-  onPointermove: "pointermove",
+  onPointerMove: "pointermove",
   onRightClick: "rightclick",
   onRightDown: "rightdown",
   onRightUp: "rightup",
@@ -66,6 +68,7 @@ export function applyBaseProps(
 ) {
   // update event handlers
 
+  this.removeAllListeners();
   Object.keys(newProps)
     .filter((key) => !PROPS_RESERVED.includes(key))
     .forEach((key) => {
@@ -73,7 +76,6 @@ export function applyBaseProps(
       const newProp = newProps[propKey];
       const eventKey = EVENT_HANDLER_MAP[key];
       if (eventKey) {
-        this.removeAllListeners();
         if (isFunction(newProp)) {
           this.on(eventKey, newProp);
         }

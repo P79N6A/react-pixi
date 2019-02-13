@@ -16,7 +16,6 @@ declare module RP {
     position?: Point;
     pivot?: Point;
     scale?: Point;
-    anchor?: Point;
     mask?: PIXI.Graphics | PIXI.Sprite;
     renderable?: boolean;
     interactive?: boolean;
@@ -51,13 +50,13 @@ declare module RP {
     onTouchendOutside?(event: PIXI.interaction.InteractionEvent): void;
     onTouchCancel?(event: PIXI.interaction.InteractionEvent): void;
     onPointerCancel?(event: PIXI.interaction.InteractionEvent): void;
-    onPointerout?(event: PIXI.interaction.InteractionEvent): void;
-    onPointerover?(event: PIXI.interaction.InteractionEvent): void;
+    onPointerOut?(event: PIXI.interaction.InteractionEvent): void;
+    onPointerOver?(event: PIXI.interaction.InteractionEvent): void;
     onPointerTap?(event: PIXI.interaction.InteractionEvent): void;
     onPointerDown?(event: PIXI.interaction.InteractionEvent): void;
     onPointerUp?(event: PIXI.interaction.InteractionEvent): void;
     onPointerUpOutside?(event: PIXI.interaction.InteractionEvent): void;
-    onPointermove?(event: PIXI.interaction.InteractionEvent): void;
+    onPointerMove?(event: PIXI.interaction.InteractionEvent): void;
     onRightClick?(event: PIXI.interaction.InteractionEvent): void;
     onRightDown?(event: PIXI.interaction.InteractionEvent): void;
     onRightUp?(event: PIXI.interaction.InteractionEvent): void;
@@ -96,6 +95,7 @@ declare module RP {
   interface SpriteProps extends BaseProps {
     source: string | PIXI.Texture;
     tint?: number;
+    anchor?: Point;
     transform?: PIXI.TransformBase;
   }
 

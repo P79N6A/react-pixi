@@ -10,7 +10,8 @@
   "author": "yinz <yinzhong.enjoying@bytedance.com>",
   "peerDependencies": {
     "pixi.js": "^4.8.5",
-    "react": "^16.8.1"
+    "react": "^16.8.1",
+    "tslib": "^1.9.3"
   },
   "devDependencies": {
     "@types/pixi.js": "^4.8.6",
@@ -20,6 +21,8 @@
   },
   "dependencies": {
     "pixi.js": "^4.8.5",
-    "react-reconciler": "^0.18.0"
+    "react": "^16.8.1",
+    "react-reconciler": "^0.18.0",
+    "tslib": "^1.9.3"
   }
 }
