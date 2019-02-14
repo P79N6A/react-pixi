@@ -139,12 +139,12 @@ declare module RP {
     container: ContainerProps;
     graphics: GraphicsProps;
     sprite: SpriteProps;
-    mesh: MeshProps;
-    rope: RopeProps;
-    "tiling-sprite": TilingSpriteProps;
-    "nine-slice-plane": NineSlicePlaneProps;
-    "particle-container": ParticleContainerProps;
-    "bitmap-text": BitmapTextProps;
+    // mesh: MeshProps;
+    // rope: RopeProps;
+    // "tiling-sprite": TilingSpriteProps;
+    // "nine-slice-plane": NineSlicePlaneProps;
+    // "particle-container": ParticleContainerProps;
+    // "bitmap-text": BitmapTextProps;
   }
 }
 

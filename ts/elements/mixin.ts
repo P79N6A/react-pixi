@@ -1,11 +1,12 @@
-import { keys, isNil } from "../utils";
+import { keys } from "../utils";
+import { isNil } from "lodash-es";
 
-const POINT_KEYS: ["pivot", "scale", "skew", "position"] = [
-  "pivot",
-  "scale",
-  "skew",
-  "position"
-];
+const POINT_KEYS_MAP = {
+  pivot: "pivot",
+  scale: "scale",
+  skew: "skew",
+  position: "position"
+};
 
 const EVENT_KEY_MAP = {
   onClick: "click",
@@ -49,12 +50,9 @@ export function applyBaseProps(
   }
 
   // point
-  POINT_KEYS.forEach((key) => {
-    const pointProp = newProps[key];
-    if (pointProp) {
-      const { x, y } = pointProp;
-      this[key].set(x, y);
-    }
+  keys(POINT_KEYS_MAP).forEach((key) => {
+    const point = newProps[key];
+    if (point) this[key].set(point.x, point.y);
   });
 
   this.interactive = newProps.interactive || false;
@@ -63,19 +61,9 @@ export function applyBaseProps(
   keys(EVENT_KEY_MAP).forEach((key) => {
     const newHandler = newProps[key];
     const oldHandler = oldProps[key];
-
-    if (newHandler === oldHandler) {
-      return;
-    }
-
+    if (newHandler === oldHandler) return;
     const eventName = EVENT_KEY_MAP[key];
-
-    if (oldHandler) {
-      this.off(eventName, oldHandler);
-    }
-
-    if (newHandler) {
-      this.on(eventName, newHandler);
-    }
+    if (oldHandler) this.off(eventName, oldHandler);
+    if (newHandler) this.on(eventName, newHandler);
   });
 }

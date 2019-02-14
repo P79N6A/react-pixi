@@ -1,5 +1,5 @@
 import Reconciler from "react-reconciler";
-import createInstance from "./createInstance";
+import ELEMENTS from "./elements";
 
 type Type = keyof RP.IntrinsicElements;
 type Props = RP.BaseProps;
@@ -36,9 +36,20 @@ const reconciler = Reconciler<
   supportsHydration: false,
   supportsPersistence: false,
   isPrimaryRenderer: true,
-  createInstance,
+  createInstance(type, props, root) {
+    const Element = ELEMENTS[type];
+    return new Element(root, props as any);
+  },
 
   appendChild(parent, child) {
+    if (typeof child === "string") {
+      //
+    } else {
+      parent.addChild(child);
+    }
+  },
+
+  insertBefore(parent, child, beforeChild) {
     if (typeof child === "string") {
       //
     } else {

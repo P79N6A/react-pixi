@@ -1,15 +1,3 @@
-export const pkg = require("../package.json");
-
-export function isNil<T>(
-  value: T | undefined | null
-): value is undefined | null {
-  return value == null;
-}
-
-export function isFunction(fn: any): fn is (...args: any[]) => void {
-  return typeof fn === "function";
-}
-
 export function keys<T>(obj: T) {
   return Object.keys(obj) as (keyof T)[];
 }
@@ -75,3 +63,5 @@ export function inRange(value: number, min: number, max: number) {
   if (value < min) return min;
   return value;
 }
+
+export const pkg = require("../package.json");

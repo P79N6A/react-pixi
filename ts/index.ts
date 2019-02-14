@@ -3,9 +3,7 @@
 import { pkg } from "./utils";
 
 export { default } from "./render";
-
-export const Sprite = "sprite";
-export const Container = "container";
-export const Graphics = "container";
+export * from "./elements/types";
+export * from "./components";
 
 console.log(`${pkg.name}: ${pkg.version}`.toUpperCase());
