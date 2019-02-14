@@ -2,7 +2,7 @@ import { Container } from "pixi.js";
 import { applyBaseProps } from "./mixin";
 
 class ContainerElement extends Container implements RP.BaseElement {
-  constructor(public root: Container, props: RP.SpriteProps) {
+  constructor(public root: PIXI.Container, props: RP.SpriteProps) {
     super();
     this.applyProps(undefined, props);
   }

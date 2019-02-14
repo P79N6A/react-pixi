@@ -1,81 +1,41 @@
 import React from "react";
 import { Graphics } from "pixi.js";
+import { inRange } from "../utils";
 
 interface Props extends RP.ContainerProps {
   width: number;
   height: number;
-  backgroundColor: number;
+  direction?: "vertical" | "horizontal" | "both";
 }
 
 class Scroll extends React.PureComponent<Props> {
+  static defaultProps = {
+    direction: "vertical"
+  };
+
+  private readonly maxY = 0;
+  private readonly maxX = 0;
   private minY = 0;
-  private maxY = 0;
   private minX = 0;
-  private maxX = 0;
+  private diffX = 0;
+  private diffY = 0;
   private startX = 0;
   private startY = 0;
   private beginX = 0;
   private beginY = 0;
+  private startT = 0;
+  private frame = 0;
 
   private wrapper = React.createRef<PIXI.Graphics>();
-  private hitArea = new PIXI.Rectangle(
-    0,
-    0,
-    this.props.width,
-    this.props.height
-  );
-
   private inner = React.createRef<PIXI.Container>();
-  private isScrolling = false;
 
   public componentDidMount() {
     const wrapper = this.wrapper.current!;
-    wrapper.beginFill(this.props.backgroundColor, 1);
     wrapper.drawRect(0, 0, this.props.width, this.props.height);
     wrapper.endFill();
   }
 
-  private mask = (() => {
-    const mask = new Graphics();
-    mask.beginFill(0, 1);
-    mask.drawRect(0, 0, this.props.width, this.props.height);
-    mask.endFill();
-    return mask;
-  })();
-
-  touchStart = (event: PIXI.interaction.InteractionEvent) => {
-    this.isScrolling = true;
-    const inner = this.inner.current!;
-    const { x, y, width, height } = inner.getBounds();
-    this.minY = Math.min(0, this.props.height - height);
-    this.maxY = 0;
-    this.minX = Math.min(0, this.props.width - width);
-    this.maxX = 0;
-    this.startX = event.data.global.x;
-    this.startY = event.data.global.y;
-    this.beginX = x;
-    this.beginY = y;
-  };
-
-  touchMove = (event: PIXI.interaction.InteractionEvent) => {
-    if (!this.isScrolling) return;
-    const inner = this.inner.current!;
-    const diffX = event.data.global.x - this.startX;
-    const diffY = event.data.global.y - this.startY;
-
-    const moveX = Math.min(Math.max(this.minX, this.beginX + diffX), this.maxX);
-    const moveY = Math.min(Math.max(this.minY, this.beginY + diffY), this.maxY);
-
-    inner.x = moveX;
-    inner.y = moveY;
-  };
-
-  touchEnd = () => {
-    this.isScrolling = false;
-    // TODO
-  };
-
-  render() {
+  public render() {
     return (
       <graphics
         interactive
@@ -85,7 +45,6 @@ class Scroll extends React.PureComponent<Props> {
         height={this.props.height}
         hitArea={this.hitArea}
         onPointerDown={this.touchStart}
-        onPointerMove={this.touchMove}
         onPointerUp={this.touchEnd}
         onPointerUpOutside={this.touchEnd}
       >
@@ -93,6 +52,99 @@ class Scroll extends React.PureComponent<Props> {
       </graphics>
     );
   }
+
+  private get mask() {
+    const mask = new Graphics();
+    mask.beginFill(0, 1);
+    mask.drawRect(0, 0, this.props.width, this.props.height);
+    mask.endFill();
+    return mask;
+  }
+
+  private get hitArea() {
+    return new PIXI.Rectangle(0, 0, this.props.width, this.props.height);
+  }
+
+  private touchStart = (event: PIXI.interaction.InteractionEvent) => {
+    cancelAnimationFrame(this.frame);
+    const wrapper = this.wrapper.current!;
+    const inner = this.inner.current!;
+    const { x, y, width, height } = inner.getBounds();
+    this.startT = Date.now();
+
+    if (this.props.direction !== "vertical") {
+      this.minX = Math.min(0, this.props.width - width);
+    }
+
+    if (this.props.direction !== "horizontal") {
+      this.minY = Math.min(0, this.props.height - height);
+    }
+
+    this.startX = event.data.global.x;
+    this.startY = event.data.global.y;
+    this.beginX = x;
+    this.beginY = y;
+
+    wrapper.on("pointermove", this.touchMove);
+  };
+
+  private touchMove = (event: PIXI.interaction.InteractionEvent) => {
+    const inner = this.inner.current!;
+    this.diffX = event.data.global.x - this.startX;
+    this.diffY = event.data.global.y - this.startY;
+
+    let x = inner.x;
+    let y = inner.y;
+    if (this.props.direction !== "vertical") {
+      x = inRange(this.beginX + this.diffX, this.minX, this.maxX);
+    }
+    if (this.props.direction !== "horizontal") {
+      y = inRange(this.beginY + this.diffY, this.minY, this.maxY);
+    }
+    inner.position.set(x, y);
+    if (Date.now() - this.startT > 300) {
+      this.touchStart(event);
+    }
+  };
+
+  private touchEnd = () => {
+    const wrapper = this.wrapper.current!;
+    const diffT = Date.now() - this.startT;
+    if (diffT <= 300) {
+      const speedX = this.diffX / diffT;
+      const speedY = this.diffY / diffT;
+      this.ease("x", speedX);
+      this.ease("y", speedY);
+    }
+
+    this.diffX = 0;
+    this.diffY = 0;
+    this.startT = Date.now();
+
+    wrapper.off("pointermove", this.touchMove);
+  };
+
+  ease = (direction: "x" | "y", speed = 0) => {
+    if (speed === 0) return;
+    const inner = this.inner.current!;
+    const f = Math.min(Math.abs(speed) / 32, 0.5);
+
+    const max = direction === "x" ? this.maxX : this.maxY;
+    const min = direction === "x" ? this.minX : this.minY;
+
+    if (speed > 0.01) {
+      speed -= f;
+    } else if (speed < -0.01) {
+      speed += f;
+    } else {
+      speed = 0;
+      return;
+    }
+
+    const v = inner[direction] + speed * 24;
+    inner[direction] = inRange(v, min, max);
+    this.frame = requestAnimationFrame(() => this.ease(direction, speed));
+  };
 }
 
 export default Scroll;

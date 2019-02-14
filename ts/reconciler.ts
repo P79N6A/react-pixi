@@ -29,21 +29,13 @@ const reconciler = Reconciler<
   NoTimeout
 >({
   now: Date.now,
-
   setTimeout,
-
   clearTimeout,
-
   noTimeout: undefined,
-
   supportsMutation: true,
-
   supportsHydration: false,
-
   supportsPersistence: false,
-
   isPrimaryRenderer: true,
-
   createInstance,
 
   appendChild(parent, child) {
@@ -74,7 +66,6 @@ const reconciler = Reconciler<
     if (typeof child === "string") {
       //
     } else {
-      child.removeAllListeners();
       parent.removeChild(child);
     }
   },
@@ -83,7 +74,6 @@ const reconciler = Reconciler<
     if (typeof child === "string") {
       //
     } else {
-      child.removeAllListeners();
       parent.removeChild(child);
     }
   },
@@ -120,7 +110,8 @@ const reconciler = Reconciler<
   },
 
   prepareUpdate(instance, type, oldProps, newProps) {
-    return {};
+    // TODO:
+    return null;
   },
 
   resetAfterCommit() {

@@ -1,31 +1,13 @@
-import { isFunction } from "../utils";
+import { keys, isNil } from "../utils";
 
-// const DEFAULT_PROPS = {
-//   alpha: 1,
-//   buttonMode: false,
-//   cacheAsBitmap: false,
-//   cursor: null,
-//   filterArea: null,
-//   filters: null,
-//   hitArea: null,
-//   interactive: false,
-//   mask: null,
-//   pivot: 0,
-//   position: 0,
-//   renderable: true,
-//   rotation: 0,
-//   scale: 1,
-//   skew: 0,
-//   transform: null,
-//   visible: true,
-//   x: 0,
-//   y: 0
-// };
+const POINT_KEYS: ["pivot", "scale", "skew", "position"] = [
+  "pivot",
+  "scale",
+  "skew",
+  "position"
+];
 
-const EVENT_HANDLER_MAP: Record<
-  string,
-  PIXI.interaction.InteractionEventTypes
-> = {
+const EVENT_KEY_MAP = {
   onClick: "click",
   onMouseDown: "mousedown",
   onMouseMove: "mousemove",
@@ -53,34 +35,47 @@ const EVENT_HANDLER_MAP: Record<
   onRightUpOutside: "rightupoutside"
 };
 
-const PROPS_RESERVED = [
-  "children",
-  "parent",
-  "worldAlpha",
-  "worldTransform",
-  "worldVisible"
-];
-
 export function applyBaseProps(
   this: RP.BaseElement,
-  oldProps: RP.BaseProps | undefined,
+  oldProps: RP.BaseProps = {},
   newProps: RP.BaseProps
 ) {
-  // update event handlers
+  // common
+  this.mask = newProps.mask || null;
+  this.alpha = isNil(newProps.alpha) ? 1 : newProps.alpha;
 
-  this.removeAllListeners();
-  Object.keys(newProps)
-    .filter((key) => !PROPS_RESERVED.includes(key))
-    .forEach((key) => {
-      const propKey = key as keyof RP.BaseProps;
-      const newProp = newProps[propKey];
-      const eventKey = EVENT_HANDLER_MAP[key];
-      if (eventKey) {
-        if (isFunction(newProp)) {
-          this.on(eventKey, newProp);
-        }
-      } else {
-        (this as any)[propKey] = newProp;
-      }
-    });
+  if (newProps.hitArea) {
+    this.hitArea = newProps.hitArea;
+  }
+
+  // point
+  POINT_KEYS.forEach((key) => {
+    const pointProp = newProps[key];
+    if (pointProp) {
+      const { x, y } = pointProp;
+      this[key].set(x, y);
+    }
+  });
+
+  this.interactive = newProps.interactive || false;
+
+  // event
+  keys(EVENT_KEY_MAP).forEach((key) => {
+    const newHandler = newProps[key];
+    const oldHandler = oldProps[key];
+
+    if (newHandler === oldHandler) {
+      return;
+    }
+
+    const eventName = EVENT_KEY_MAP[key];
+
+    if (oldHandler) {
+      this.off(eventName, oldHandler);
+    }
+
+    if (newHandler) {
+      this.on(eventName, newHandler);
+    }
+  });
 }

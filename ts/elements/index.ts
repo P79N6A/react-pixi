@@ -1,8 +1,4 @@
-import sprite from "./Sprite";
-import text from "./Text";
-import container from "./Container";
-import graphics from "./Graphics";
-
-export { sprite, text, container, graphics };
-
-export default { sprite, text, container, graphics };
+export { default as sprite } from "./Sprite";
+export { default as text } from "./Text";
+export { default as container } from "./Container";
+export { default as graphics } from "./Graphics";

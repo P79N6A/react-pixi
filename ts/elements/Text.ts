@@ -1,7 +1,7 @@
-import { Text, Container } from "pixi.js";
+import { Text } from "pixi.js";
 
 class SpriteElement extends Text implements RP.BaseElement {
-  constructor(public root: Container, props: RP.TextProps) {
+  constructor(public root: PIXI.Container, props: RP.TextProps) {
     super();
     this.applyProps(undefined, props);
   }

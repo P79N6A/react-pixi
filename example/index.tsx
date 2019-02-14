@@ -1,10 +1,10 @@
-import render from "../ts";
+import render, { Sprite } from "../ts";
 import Scroll from "../ts/components/Scroll";
 import React from "react";
 
 class App extends React.Component {
   state = {
-    num: 1
+    num: 30
   };
   public componentDidMount() {
     setInterval(() => {
@@ -17,18 +17,16 @@ class App extends React.Component {
   }
   public render() {
     return (
-      <Scroll width={400} height={300} backgroundColor={0xff3300}>
+      <Scroll width={400} height={300} direction={"both"}>
         {Array(this.state.num)
           .fill("")
           .map((_, i) => (
-            <sprite
+            <Sprite
               key={i}
               source="https://avatars2.githubusercontent.com/u/12208108?s=100&v=4"
-              y={600 * i}
-              x={0}
+              position={{ x: 0, y: 600 * i }}
               width={600}
               height={600}
-              tint={0x33ff00}
             />
           ))}
       </Scroll>

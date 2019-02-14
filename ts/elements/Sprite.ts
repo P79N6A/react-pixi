@@ -1,8 +1,8 @@
-import { Sprite, Texture, Container } from "pixi.js";
+import { Sprite, Texture } from "pixi.js";
 import { applyBaseProps } from "./mixin";
 
 class SpriteElement extends Sprite implements RP.BaseElement {
-  constructor(public root: Container, props: RP.SpriteProps) {
+  constructor(public root: PIXI.Container, props: RP.SpriteProps) {
     super();
     this.applyProps(undefined, props);
   }
@@ -15,6 +15,10 @@ class SpriteElement extends Sprite implements RP.BaseElement {
         this.texture = Texture.from(newProps.source);
       }
     }
+
+    this.width = newProps.width || 0;
+    this.height = newProps.height || 0;
+    this.tint = newProps.tint || 0xffffff;
 
     applyBaseProps.call(this, oldProps, newProps);
   }

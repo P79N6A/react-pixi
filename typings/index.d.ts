@@ -5,9 +5,6 @@ declare module RP {
   }
 
   interface BaseProps<T = any> extends React.Props<T> {
-    x?: number;
-    y?: number;
-    zIndex?: boolean;
     width?: number;
     height?: number;
     alpha?: number;
