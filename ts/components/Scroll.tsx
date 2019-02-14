@@ -1,6 +1,6 @@
 import React from "react";
 import { Graphics } from "pixi.js";
-import { inRange } from "../utils";
+import { clamp } from "lodash-es";
 
 interface Props extends RP.ContainerProps {
   width: number;
@@ -111,10 +111,10 @@ class Scroll extends React.PureComponent<Props> {
     let x = inner.x;
     let y = inner.y;
     if (this.props.direction !== "vertical") {
-      x = inRange(this.beginX + this.diffX, this.minX, this.maxX);
+      x = clamp(this.beginX + this.diffX, this.minX, this.maxX);
     }
     if (this.props.direction !== "horizontal") {
-      y = inRange(this.beginY + this.diffY, this.minY, this.maxY);
+      y = clamp(this.beginY + this.diffY, this.minY, this.maxY);
     }
 
     inner.position.set(x, y);
@@ -153,7 +153,7 @@ class Scroll extends React.PureComponent<Props> {
       return;
     }
     const v = inner[direction] + speed * 24;
-    inner[direction] = inRange(v, min, max);
+    inner[direction] = clamp(v, min, max);
     this.frame = requestAnimationFrame(() => this.ease(direction, speed));
     this.emitScroll();
   };
