@@ -1,12 +1,10 @@
 declare module RP {
   interface Point {
-    x?: number;
-    y?: number;
+    x: number;
+    y: number;
   }
 
   interface BaseProps<T = any> extends React.Props<T> {
-    width?: number;
-    height?: number;
     alpha?: number;
     angle?: number;
     rotation?: number;
@@ -66,6 +64,42 @@ declare module RP {
 
   interface TextProps extends BaseProps {
     children: string | string[];
+    align?: "left" | "right" | "center";
+    breakWords?: boolean;
+    dropShadow?: boolean;
+    dropShadowAlpha?: number;
+    dropShadowAngle?: number;
+    dropShadowBlur?: number;
+    dropShadowColor?: string | number;
+    dropShadowDistance?: number;
+    fill?:
+      | string
+      | string[]
+      | number
+      | number[]
+      | CanvasGradient
+      | CanvasPattern;
+
+    fillGradientType?: number;
+    fillGradientStops?: number[];
+    fontFamily?: string | string[];
+    fontSize?: number | string;
+    fontStyle?: string;
+    fontVariant?: string;
+    fontWeight?: string;
+    leading?: number;
+    letterSpacing?: number;
+    lineHeight?: number;
+    lineJoin?: string;
+    miterLimit?: number;
+    padding?: number;
+    stroke?: string | number;
+    strokeThickness?: number;
+    textBaseline?: string;
+    trim?: boolean;
+    whiteSpace?: string;
+    wordWrap?: boolean;
+    wordWrapWidth?: number;
   }
 
   interface ContainerProps extends BaseProps {}
@@ -87,16 +121,37 @@ declare module RP {
     lineWidth?: number;
     nativeLines?: boolean;
     tint?: number;
+
+    currentPath?: GraphicsData;
+    isMask?: boolean;
+    dirty?: number;
+    canvasTintDirty?: number;
+    fastRectDirty?: number;
+    clearDirty?: number;
+    boundsDirty?: number;
   }
 
   interface SpriteProps extends BaseProps {
+    width?: number;
+    height?: number;
+    // texture: Texture; read from source
     source: string | PIXI.Texture;
     tint?: number;
     anchor?: Point;
     transform?: PIXI.TransformBase;
+    blendMode?: number;
+    pluginName?: string;
+    vertexData?: Float32Array;
   }
 
-  interface TilingSpriteProps extends BaseProps {}
+  interface TilingSpriteProps extends SpriteProps {
+    tileTransform?: TransformStatic;
+    uvTransform?: TextureMatrix;
+    uvRespectAnchor?: boolean;
+    clampMargin?: number;
+    tileScale?: Point;
+    tilePosition?: Point;
+  }
 
   interface MeshProps extends BaseProps {}
 

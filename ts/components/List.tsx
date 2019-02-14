@@ -31,43 +31,11 @@ interface State<T> {
 }
 
 class List<T> extends React.PureComponent<Props<T>, State<T>> {
+  private nextStartIndex = 0;
+
   constructor(props: Props<T>) {
     super(props);
     this.initState();
-  }
-
-  private initState() {
-    const vList = [];
-    const {
-      data,
-      initialNumToRender = 10,
-      getItemLayout,
-      keyExtractor
-    } = this.props;
-
-    let index = 0;
-    while (index < initialNumToRender) {
-      const item = data[index];
-      const y = getItemLayout(data, index).offset;
-      vList.push({
-        item,
-        index,
-        key: keyExtractor(item, index),
-        position: { x: 0, y }
-      });
-      index += 1;
-    }
-    this.state = { vList };
-  }
-
-  get contentHeight() {
-    if (this.props.data.length === 0) return 0;
-    const lastIndex = this.props.data.length - 1;
-    const { offset, length } = this.props.getItemLayout(
-      this.props.data,
-      lastIndex
-    );
-    return offset + length;
   }
 
   public render() {
@@ -83,16 +51,14 @@ class List<T> extends React.PureComponent<Props<T>, State<T>> {
     );
   }
 
-  private lastIndex = 0;
-
-  private handleScroll = throttle((x: number, y: number) => {
+  private _handleScroll = (x: number, y: number) => {
     const { data } = this.props;
     const vList: VItem<T>[] = [];
     const top = -y - this.props.height / 2;
     const bottom = -y + this.props.height * (3 / 2);
 
-    let index1 = this.lastIndex;
-    let index2 = this.lastIndex - 1;
+    let index1 = this.nextStartIndex;
+    let index2 = this.nextStartIndex - 1;
 
     // 向后找
     while (index1 < data.length) {
@@ -128,9 +94,11 @@ class List<T> extends React.PureComponent<Props<T>, State<T>> {
       }
       index2 -= 1;
     }
-    this.lastIndex = Math.ceil((index1 + index2) / 2);
+    this.nextStartIndex = Math.ceil((index1 + index2) / 2);
     this.setState({ vList });
-  }, 300);
+  };
+
+  private handleScroll = throttle(this._handleScroll, 300);
 
   private renderItems() {
     return this.state.vList.map(({ item, key, position }) => {
@@ -140,6 +108,39 @@ class List<T> extends React.PureComponent<Props<T>, State<T>> {
         </container>
       );
     });
+  }
+
+  private initState() {
+    const vList = [];
+    const {
+      data,
+      initialNumToRender = 10,
+      getItemLayout,
+      keyExtractor
+    } = this.props;
+
+    let index = 0;
+    while (index < initialNumToRender) {
+      const item = data[index];
+      const y = getItemLayout(data, index).offset;
+      vList.push({
+        item,
+        index,
+        key: keyExtractor(item, index),
+        position: { x: 0, y }
+      });
+      index += 1;
+    }
+    this.state = { vList };
+  }
+
+  private get contentHeight() {
+    if (this.props.data.length === 0) return 0;
+    const { offset, length } = this.props.getItemLayout(
+      this.props.data,
+      this.props.data.length - 1
+    );
+    return offset + length;
   }
 }
 

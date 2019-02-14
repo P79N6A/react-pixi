@@ -1,5 +1,6 @@
 import { Sprite, Texture } from "pixi.js";
 import { applyBaseProps } from "./mixin";
+import { isNil } from "lodash-es";
 
 class SpriteElement extends Sprite implements RP.BaseElement {
   constructor(public root: PIXI.Container, props: RP.SpriteProps) {
@@ -16,9 +17,15 @@ class SpriteElement extends Sprite implements RP.BaseElement {
       }
     }
 
-    this.width = newProps.width || 0;
-    this.height = newProps.height || 0;
-    this.tint = newProps.tint || 0xffffff;
+    if (!isNil(newProps.width)) {
+      this.width = newProps.width;
+    }
+    if (!isNil(newProps.height)) {
+      this.height = newProps.height;
+    }
+    if (!isNil(newProps.tint)) {
+      this.tint = newProps.tint;
+    }
 
     applyBaseProps.call(this, oldProps, newProps);
   }

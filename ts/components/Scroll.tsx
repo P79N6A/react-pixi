@@ -1,6 +1,6 @@
 import React from "react";
 import { Graphics } from "pixi.js";
-import { clamp } from "lodash-es";
+import { clamp, throttle } from "lodash-es";
 
 interface Props extends RP.ContainerProps {
   width: number;
@@ -119,7 +119,7 @@ class Scroll extends React.PureComponent<Props> {
 
     inner.position.set(x, y);
     this.emitScroll();
-    if (Date.now() - this.startT > 300) {
+    if (Date.now() - this.startT > 400) {
       this.touchStart(event);
     }
   };

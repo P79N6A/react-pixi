@@ -1,5 +1,6 @@
-import render, { Sprite, Scroll, List } from "../ts";
+import render, { Sprite, List, Container } from "../ts";
 import React from "react";
+import { times } from "lodash-es";
 
 class App extends React.Component {
   state = {
@@ -9,9 +10,7 @@ class App extends React.Component {
   public render() {
     return (
       <List
-        data={Array(100000)
-          .fill(0)
-          .map((_, i) => i)}
+        data={times(1000)}
         height={600}
         width={300}
         keyExtractor={(item) => item}
@@ -22,11 +21,21 @@ class App extends React.Component {
         })}
         renderItem={() => {
           return (
-            <Sprite
-              source="https://avatars2.githubusercontent.com/u/12208108?s=100&v=4"
-              width={100}
-              height={100}
-            />
+            <Container>
+              <Sprite
+                source="https://avatars2.githubusercontent.com/u/12208108?s=200&v=4"
+                width={100}
+                height={100}
+                position={{ x: 0, y: 0 }}
+              />
+
+              <Sprite
+                source="https://avatars2.githubusercontent.com/u/12208108?s=200&v=4"
+                width={100}
+                height={100}
+                position={{ x: 200, y: 0 }}
+              />
+            </Container>
           );
         }}
       />
