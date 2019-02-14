@@ -152,10 +152,12 @@ class Scroll extends React.PureComponent<Props> {
     } else {
       return;
     }
-    const v = inner[direction] + speed * 24;
-    inner[direction] = clamp(v, min, max);
-    this.frame = requestAnimationFrame(() => this.ease(direction, speed));
-    this.emitScroll();
+    const v = clamp(inner[direction] + speed * 24, min, max);
+    inner[direction] = v;
+    if (v > min && v < max) {
+      this.frame = requestAnimationFrame(() => this.ease(direction, speed));
+      this.emitScroll();
+    }
   };
 
   private emitScroll() {

@@ -9,18 +9,18 @@ class App extends React.Component {
   public render() {
     return (
       <List
-        data={Array(100)
+        data={Array(100000)
           .fill(0)
           .map((_, i) => i)}
-        height={300}
+        height={600}
         width={300}
-        keys={(item) => item}
+        keyExtractor={(item) => item}
         getItemLayout={(item, index) => ({
           length: 100,
           offset: 100 * index,
           index
         })}
-        renderItem={(item) => {
+        renderItem={() => {
           return (
             <Sprite
               source="https://avatars2.githubusercontent.com/u/12208108?s=100&v=4"

@@ -7,6 +7,7 @@ interface Props<ItemT> {
   height: number;
   data: ItemT[];
   renderItem(item: ItemT): React.ReactNode;
+  initialNumToRender?: number;
   getItemLayout(
     data: ItemT[],
     index: number
@@ -15,13 +16,49 @@ interface Props<ItemT> {
     offset: number;
     index: number;
   };
-  keys(item: ItemT, index: number): string | number;
+  keyExtractor(item: ItemT, index: number): string | number;
 }
 
-class List<T> extends React.PureComponent<Props<T>> {
-  public state = {
-    scrollY: 0
-  };
+interface VItem<T> {
+  key: string | number;
+  item: T;
+  index: number;
+  position: { x: number; y: number };
+}
+
+interface State<T> {
+  vList: VItem<T>[];
+}
+
+class List<T> extends React.PureComponent<Props<T>, State<T>> {
+  constructor(props: Props<T>) {
+    super(props);
+    this.initState();
+  }
+
+  private initState() {
+    const vList = [];
+    const {
+      data,
+      initialNumToRender = 10,
+      getItemLayout,
+      keyExtractor
+    } = this.props;
+
+    let index = 0;
+    while (index < initialNumToRender) {
+      const item = data[index];
+      const y = getItemLayout(data, index).offset;
+      vList.push({
+        item,
+        index,
+        key: keyExtractor(item, index),
+        position: { x: 0, y }
+      });
+      index += 1;
+    }
+    this.state = { vList };
+  }
 
   get contentHeight() {
     if (this.props.data.length === 0) return 0;
@@ -46,28 +83,59 @@ class List<T> extends React.PureComponent<Props<T>> {
     );
   }
 
+  private lastIndex = 0;
+
   private handleScroll = throttle((x: number, y: number) => {
-    this.setState({ scrollY: y });
+    const { data } = this.props;
+    const vList: VItem<T>[] = [];
+    const top = -y - this.props.height / 2;
+    const bottom = -y + this.props.height * (3 / 2);
+
+    let index1 = this.lastIndex;
+    let index2 = this.lastIndex - 1;
+
+    // 向后找
+    while (index1 < data.length) {
+      const item = data[index1];
+      const { offset, length } = this.props.getItemLayout(data, index1);
+      if (offset + length > top) {
+        vList.push({
+          key: this.props.keyExtractor(item, index1),
+          item,
+          index: index1,
+          position: { x: 0, y: offset }
+        });
+      }
+      if (offset > bottom) {
+        break;
+      }
+      index1 += 1;
+    }
+
+    // 向前找
+    while (index2 >= 0) {
+      const item = data[index2];
+      const { offset, length } = this.props.getItemLayout(data, index2);
+      if (offset + length > top) {
+        vList.unshift({
+          key: this.props.keyExtractor(item, index2),
+          item,
+          index: index2,
+          position: { x: 0, y: offset }
+        });
+      } else {
+        break;
+      }
+      index2 -= 1;
+    }
+    this.lastIndex = Math.ceil((index1 + index2) / 2);
+    this.setState({ vList });
   }, 300);
 
   private renderItems() {
-    const top = -this.state.scrollY;
-    return this.props.data.map((item, index) => {
-      const { offset, length } = this.props.getItemLayout(
-        this.props.data,
-        index
-      );
-
-      if (offset + length < top - this.props.height * 0.5) return null;
-      if (offset > top + this.props.height * 1.5) return null;
-
-      if (index === 0) {
-        console.log(offset);
-      }
-
-      const position = { x: 0, y: offset };
+    return this.state.vList.map(({ item, key, position }) => {
       return (
-        <container key={this.props.keys(item, index)} position={position}>
+        <container key={key} position={position}>
           {this.props.renderItem(item)}
         </container>
       );
